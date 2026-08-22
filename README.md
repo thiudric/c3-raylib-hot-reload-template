@@ -13,7 +13,7 @@ Dependencies: c3c, cmake, git, gcc
 clone the repo and raylib submodule:
 
 ```
-git clone --recurse-submodules https://github.com/theodric/c3_raylib_hot_reload_template
+git clone --recurse-submodules https://github.com/galarus/c3-raylib-hot-reload-template
 cd c3_raylib_hot_reload_template
 ```
 
