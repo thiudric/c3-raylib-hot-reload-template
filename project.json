@@ -1,0 +1,41 @@
+{
+  "langrev": "1",
+  "warnings": ["no-unused"],
+  "dependency-search-paths": ["lib"],
+  "authors": ["Theodric"],
+  "version": "0.1.0",
+  "build-dir": "build",
+  "output": "build",
+  "targets": {
+    "game": {
+      "type": "dynamic-lib",
+      "sources": ["src/game/**"],
+      "dependencies": ["raylib6"],
+      "linker-search-paths": ["build/raylib/raylib", "build/raygui"],
+      "link-args": [
+        "-l:libraylib.so.600",
+        "-l:libraygui.so",
+        "--rpath=$ORIGIN/../raygui:$ORIGIN/../raylib/raylib"
+      ],
+      "reloc": "PIC"
+    },
+    "host": {
+      "type": "executable",
+      "sources": ["src/host/**"],
+      "linked-libraries": ["dl"]
+    },
+    "release": {
+      "type": "executable",
+      "sources": ["src/release/**", "src/game/**"],
+      "dependencies": ["raylib6"],
+
+      "linker-search-paths": [
+        "build/raylib-static/raylib",
+        "build/raygui-static"
+      ],
+      "link-args": ["-l:libraygui.a", "-l:libraylib.a"],
+      "opt": "O3",
+      "debug-info": "none"
+    }
+  }
+}
