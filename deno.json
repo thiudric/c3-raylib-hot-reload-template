@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "watch": "deno run --allow-read=src/game,build --allow-run watch_game.ts",
+    "check": "deno check watch_game.ts"
+  },
+  "fmt": {
+    "include": ["watch_game.ts"]
+  },
+  "lint": {
+    "include": ["watch_game.ts"]
+  }
+}

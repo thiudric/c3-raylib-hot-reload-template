@@ -12,6 +12,8 @@ Tested on Linux and Windows.
 
 All platforms: c3c, cmake, git, gcc
 
+optional for automatic file watching: Deno
+
 On linux, these should be available in your package manager.
 
 On Windows, I installed git-for-windows, cmake, and c3c from their respective websites, and added c3c's directory to my path environment variable
@@ -54,6 +56,22 @@ To update the active game library:
 - run `./build_game.sh(ps1)` again. 
 - If something goes wrong, press F5 to force full reset of game state.
 
+Optionally, install Deno and automatically rebuild whenever a file under
+`src/game` changes:
+
+```
+deno task watch
+```
+
+The watcher checks for the Raylib/Raygui shared dependencies and offers to
+build them when missing. It also offers to build a missing development host,
+builds the game library, launches the host, and rebuilds the game whenever a
+file under `src/game` changes.
+
+The watcher runs the platform-specific PowerShell scripts on Windows and shell
+scripts on Linux.
+Deno is not required for manual builds or release builds.
+
 ## Build for release:
 
 Linux: `./build_release.sh`
@@ -65,7 +83,7 @@ outputs `build/release` with dependencies bundled into a single executable
 ## TODO
 
 - [ ] More accurate C3 struct-state/layout checking to determine when a full reload is required
-- [ ] Optional source code watching / automatic rebuilds
+- [x] Optional source code watching / automatic rebuilds
 - [x] Windows support
 - [ ] macOS support 
 - [ ] wasm release builds
