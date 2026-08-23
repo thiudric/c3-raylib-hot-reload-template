@@ -6,7 +6,7 @@ The host executable stays alive and manages the hot-reload process and persisten
 
 Tested on Linux and Windows.
 
-## Dev Workflow
+## Setup
 
 ### Dependencies
 
@@ -30,6 +30,10 @@ cd c3-raylib-hot-reload-template
 ```
 run `git submodule update --init --recursive` if you forgot --recurse-submobules
 
+## Dev Workflow 
+
+automate with `deno task watch` or run the scripts manually as follows:
+
 ### Build Raylib/Raygui as shared library:
 
 Linux: `./build_deps.sh`
@@ -37,7 +41,8 @@ Linux: `./build_deps.sh`
 Windows: `pwsh ./build_deps.ps1`
 
 ### Build the host: 
-all platforms: `c3c build host `
+
+all platforms: `c3c build host`
 
 ### Build and publish the game library:
 
@@ -56,16 +61,11 @@ To update the active game library:
 - run `./build_game.sh(ps1)` again. 
 - If something goes wrong, press F5 to force full reset of game state.
 
-Optionally, install Deno and automatically rebuild whenever a file under
-`src/game` changes:
+Optionally: `deno task watch`
 
-```
-deno task watch
-```
-
-The watcher checks for the Raylib/Raygui shared dependencies and offers to
-build them when missing. It also offers to build a missing development host,
-builds the game library, launches the host, and rebuilds the game whenever a
+Checks for Raylib/Raygui shared libraries, and dev host, and asks to
+build them if missing. 
+Launches the host and rebuilds game lib whenever a
 file under `src/game` changes.
 
 The watcher runs the platform-specific PowerShell scripts on Windows and shell
