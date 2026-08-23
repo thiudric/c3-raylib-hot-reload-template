@@ -6,13 +6,12 @@ module host;
 import std::io;
 import std::time;
 import std::io::path;
-import libc;
 const MEM_BUFFER_SIZE  = 1024;
 const MAX_RETIRED_LIBS = 64;
-const GAME_BUILD_PATH  = "./build/game_ready.so";
+const DYNAMIC_LIB_EXTENSION = env::WIN32 ? ".dll" : ".so";
+const GAME_BUILD_PATH  = env::WIN32 ? "./build/game_ready.dll" : "./build/game_ready.so";
+const HOT_LIB_MASK     = env::WIN32 ? "game*.dll" : "game*.so";
 const HOT_LIB_PATH     = "./build/hot/";
-
-extern fn ZString dlerror();
 
 uint next_lib_id;
 GameLib[MAX_RETIRED_LIBS] retired_libs;

@@ -21,8 +21,7 @@
     },
     "host": {
       "type": "executable",
-      "sources": ["src/host/**"],
-      "linked-libraries": ["dl"]
+      "sources": ["src/host/**"]
     },
     "release": {
       "type": "executable",

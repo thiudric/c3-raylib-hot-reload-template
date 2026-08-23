@@ -2,10 +2,9 @@ module host;
 import std::io;
 import std::time;
 import std::io::path;
-import libc;
 
 // startup
-alias InitMemFn = fn void(Allocator);
+alias InitMemFn = fn void(ArenaAllocator*);
 alias InitWindowFn = fn void();
 // main loop
 alias ShouldRunFn = fn bool();
@@ -126,7 +125,7 @@ fn void? cleanup_hot_libs() => @pool()
 		return;
 	}
 	io::printfn("cleaning up hot libs in %s", hot_dir);
-	PathList libs = path::ls(tmem, hot_dir, no_dirs: true, mask: "game*.so")!;
+	PathList libs = path::ls(tmem, hot_dir, no_dirs: true, mask: HOT_LIB_MASK)!;
 
 	foreach (lib : libs)
 	{
@@ -157,13 +156,9 @@ fn bool retire_game_lib(GameLib* lib)
 macro bool @load_lib_fn(void* handle, #fn_ptr)
 {
 	ZString fn_name = $stringify(#fn_ptr);
-	// clear stale error
-	dlerror();
-	void* sym   = libc::dlsym(handle, fn_name);
-	ZString err = dlerror();
-	if (err != null)
+	void* sym = dynamic_library_symbol(handle, fn_name);
+	if (sym == null)
 	{
-		io::printfn("failed loading %s: %s", fn_name, err);
 		return false;
 	}
 	#fn_ptr = ($Typeof(#fn_ptr))sym;
@@ -187,10 +182,9 @@ fn bool load_game_lib(GameLib* lib) => @pool()
 
 	io::printfn("copied game library to %s", lib_path);
 
-	void* handle = libc::dlopen(lib_path.zstr_tcopy(), libc::RTLD_NOW);
+	void* handle = dynamic_library_open(lib_path.zstr_tcopy());
 	if (handle == null)
 	{
-		io::printfn("dlopen failed: %s", dlerror());
 		return false;
 	}
 
@@ -227,7 +221,7 @@ fn bool load_game_lib(GameLib* lib) => @pool()
 		game_shutdown
 	) || !@load_lib_fn(handle, game_init_window) || !@load_lib_fn(handle, game_should_run))
 	{
-		libc::dlclose(handle);
+		dynamic_library_close(handle);
 		return false;
 	}
 	lib.handle = handle;
@@ -248,7 +242,7 @@ fn void unload_game_lib(GameLib* lib)
 {
 	if (lib.handle != null)
 	{
-		libc::dlclose(lib.handle);
+		dynamic_library_close(lib.handle);
 		io::printn("game lib unloaded");
 	}
 	*lib = { };
@@ -257,7 +251,7 @@ fn void unload_game_lib(GameLib* lib)
 // stores next game lib in temp allocator
 fn String get_next_temp_lib_path()
 {
-	String versioned_path = string::tformat("%sgame_%06d.so", HOT_LIB_PATH, next_lib_id);
+	String versioned_path = string::tformat("%sgame_%06d%s", HOT_LIB_PATH, next_lib_id, DYNAMIC_LIB_EXTENSION);
 	next_lib_id += 1;
 	io::printfn("lib path: %s", versioned_path);
 	return versioned_path;
