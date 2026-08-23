@@ -68,6 +68,7 @@ outputs `build/release` with dependencies bundled into a single executable
 - [ ] Optional source code watching / automatic rebuilds
 - [x] Windows support
 - [ ] macOS support 
+- [ ] wasm release builds
 
 ## Inspiration
 

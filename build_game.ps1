@@ -15,6 +15,7 @@ try {
     }
 
     Move-Item -LiteralPath build/game.dll -Destination build/game_ready.dll -Force
+    Remove-Item -LiteralPath game.lib -ErrorAction SilentlyContinue
     Write-Host 'Game library built successfully.'
 }
 finally {
