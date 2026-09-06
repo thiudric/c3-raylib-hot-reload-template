@@ -39,6 +39,8 @@ cd c3-raylib-hot-reload-template
 ```
 run `git submodule update --init --recursive` if you forgot --recurse-submodules
 
+## Dev Workflow 
+
 ### Build Raylib/Raygui as shared library:
 
 Linux: `./build_deps.sh`
@@ -48,7 +50,7 @@ Windows: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build_deps.p
 (you may be able to just run `./build_deps.ps1` without the extra parameters)
 
 ### Build the host: 
-all platforms: `c3c build host `
+all platforms: `c3c build host`
 
 ### Build and publish the game library:
 
