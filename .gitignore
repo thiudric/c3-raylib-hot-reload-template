@@ -1,4 +1,6 @@
 build/
 out/
+/*.exe
+/game.lib
 .c3-cache
 .cache/

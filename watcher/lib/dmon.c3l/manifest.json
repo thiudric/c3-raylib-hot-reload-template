@@ -1,0 +1,19 @@
+{
+    "provides": "dmon",
+
+    "sources": [
+        "dmon.c3"
+    ],
+
+    "c-sources": [
+        "c/dmon_impl.c"
+    ],
+
+    "c-include-dirs": [
+        "c"
+    ],
+    "targets": {
+        "windows-x64": {},
+        "linux-x64": {}
+    }
+}

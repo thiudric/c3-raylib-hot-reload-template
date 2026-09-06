@@ -7,7 +7,9 @@
   "build-dir": "build",
   "output": "build",
   "targets": {
-    "game": {
+    "game-linux": {
+      "name": "game",
+      "target": "linux-x64",
       "type": "dynamic-lib",
       "sources": ["src/game/**"],
       "dependencies": ["raylib6"],
@@ -19,20 +21,44 @@
       ],
       "reloc": "PIC"
     },
+    "game-windows": {
+      "name": "game",
+      "target": "windows-x64",
+      "type": "dynamic-lib",
+      "sources": ["src/game/**"],
+      "dependencies": ["raylib6"],
+      "linker-search-paths": ["build/raylib/raylib", "build/raygui"],
+      "wincrt": "dynamic"
+    },
     "host": {
       "type": "executable",
       "sources": ["src/host/**"]
     },
-    "release": {
+    "release-linux": {
+      "name": "release",
+      "target": "linux-x64",
       "type": "executable",
       "sources": ["src/release/**", "src/game/**"],
       "dependencies": ["raylib6"],
-
       "linker-search-paths": [
         "build/raylib-static/raylib",
         "build/raygui-static"
       ],
       "link-args": ["-l:libraygui.a", "-l:libraylib.a"],
+      "opt": "O3",
+      "debug-info": "none"
+    },
+    "release-windows": {
+      "name": "release",
+      "target": "windows-x64",
+      "type": "executable",
+      "sources": ["src/release/**", "src/game/**"],
+      "dependencies": ["raylib6"],
+      "linker-search-paths": [
+        "build/raylib-static/raylib",
+        "build/raygui-static"
+      ],
+      "wincrt": "dynamic",
       "opt": "O3",
       "debug-info": "none"
     }

@@ -1,4 +1,4 @@
-#Requires -Version 7.0
+#Requires -Version 5.1
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -79,7 +79,7 @@ try {
 
     Write-Host '==> Building release executable'
     Invoke-NativeCommand -Command c3c -Arguments @(
-        'build', 'release', '--wincrt=dynamic'
+        'build', 'release-windows'
     )
 
     Write-Host ''

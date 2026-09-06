@@ -24,7 +24,13 @@ fn void main()
 		io::printfn("%s does not exist; build the game first", GAME_BUILD_PATH);
 		return;
 	}
-	Time last_game_modified = file::last_modified(GAME_BUILD_PATH)!!;
+	Time? initial_modified = file::last_modified(GAME_BUILD_PATH);
+	if (catch err = initial_modified)
+	{
+		io::printfn("error reading game library timestamp: %s", err);
+		return;
+	}
+	Time last_game_modified = initial_modified;
 	if (catch err = cleanup_hot_libs())
 	{
 		io::printfn("error cleaning up hot libs: %s", err);
@@ -46,21 +52,32 @@ fn void main()
 	// initialize game memory after window
 	game_lib.init_window();
 	game_lib.init_mem(&arena);
+	bool force_state_reset = false;
 	while (game_lib.should_run())
 	{
 		game_lib.tick();
 
-		Time modified_time     = file::last_modified(GAME_BUILD_PATH)!!;
-		bool was_modified      = modified_time != last_game_modified;
-		bool force_state_reset = game_lib.reload_requested();
+		// Preserve a reset request if publishing temporarily prevents a reload.
+		bool reset_requested = game_lib.reload_requested();
+		force_state_reset = force_state_reset || reset_requested;
+		Time? modified_result = file::last_modified(GAME_BUILD_PATH);
+		if (catch err = modified_result)
+		{
+			// Keep the loaded game running while the published file is unavailable.
+			continue;
+		}
+		Time modified_time = modified_result;
+		bool was_modified = modified_time != last_game_modified;
 		if (was_modified || force_state_reset)
 		{
-			last_game_modified = modified_time;
 			io::printn("reload required");
 			if (!reload_latest_lib(&game_lib, &arena, force_state_reset))
 			{
 				io::printn("reload failed; keeping current game");
+				continue;
 			}
+			last_game_modified = modified_time;
+			force_state_reset = false;
 		}
 	}
 	game_lib.shutdown();

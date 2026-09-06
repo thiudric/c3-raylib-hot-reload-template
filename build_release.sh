@@ -41,7 +41,7 @@ ar rcs \
 
 echo "==> Building release executable"
 
-c3c build release
+c3c build release-linux
 
 
 echo
