@@ -6,12 +6,12 @@ module host;
 import std::io;
 import std::time;
 import std::io::path;
-const MEM_BUFFER_SIZE  = 1024;
-const MAX_RETIRED_LIBS = 64;
+const MEM_BUFFER_SIZE       = 1024;
+const MAX_RETIRED_LIBS      = 64;
 const DYNAMIC_LIB_EXTENSION = env::WIN32 ? ".dll" : ".so";
-const GAME_BUILD_PATH  = env::WIN32 ? "./build/game_ready.dll" : "./build/game_ready.so";
-const HOT_LIB_MASK     = env::WIN32 ? "game*.dll" : "game*.so";
-const HOT_LIB_PATH     = "./build/hot/";
+const GAME_BUILD_PATH       = env::WIN32 ? "./build/game.dll" : "./build/game.so";
+const HOT_LIB_MASK          = env::WIN32 ? "game*.dll" : "game*.so";
+const HOT_LIB_PATH          = "./build/hot/";
 
 uint next_lib_id;
 GameLib[MAX_RETIRED_LIBS] retired_libs;
@@ -67,7 +67,7 @@ fn void main()
 			continue;
 		}
 		Time modified_time = modified_result;
-		bool was_modified = modified_time != last_game_modified;
+		bool was_modified  = modified_time != last_game_modified;
 		if (was_modified || force_state_reset)
 		{
 			io::printn("reload required");
