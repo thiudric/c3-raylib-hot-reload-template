@@ -82,7 +82,7 @@ Windows: `.\build\host.exe`
 To update the active game library:
 - edit tick/init_window/shutdown functions in `src/game/game.c3` 
 - run `c3c build game-linux` or `c3c build game-windows` again, depending on platform. 
-- If something goes wrong, press F5 to force full reset of game state.
+- If something goes wrong, press F5 to force full reset of game state. Or increment MEM_SCHEMA_VERSION.
 
 ## Build for release:
 

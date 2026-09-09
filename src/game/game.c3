@@ -8,6 +8,11 @@ import std::core::mem::alloc;
 import raylib6::rl;
 import raygui::rg;
 
+// bump to trigger code-based manual total reset when meaning of state changes,
+// or changes are too small to change the size of the struct.
+// when you dont want to press f5, bump this value instead.
+const uint MEM_SCHEMA_VERSION = 1;
+
 // state that persists between hot reloads
 struct GameMem
 {
@@ -71,6 +76,11 @@ fn void* mem() @export("game_mem")
 fn usz mem_size() @export("game_mem_size")
 {
 	return GameMem::size;
+}
+
+fn uint mem_version() @export("game_mem_version")
+{
+	return MEM_SCHEMA_VERSION;
 }
 
 fn bool reload_requested() @export("game_reload_requested")

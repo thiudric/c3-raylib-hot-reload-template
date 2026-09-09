@@ -13,6 +13,7 @@ alias ReloadRequestedFn = fn bool();
 // hot reload
 alias MemFn = fn void*();
 alias MemSizeFn = fn usz();
+alias MemVersionFn = fn uint();
 alias ReloadMemFn = fn void(void*);
 // shutdown
 alias ShutdownFn = fn void();
@@ -34,6 +35,7 @@ struct GameLib
 
 	MemFn mem;
 	MemSizeFn mem_size;
+	MemVersionFn mem_version;
 	ReloadMemFn reload_mem;
 
 	ShutdownFn shutdown;
@@ -58,10 +60,14 @@ fn bool reload_latest_lib(GameLib* active_lib, ArenaAllocator* arena, bool force
 	// a manual reset may be required if the size check isn't sufficient.
 	usz old_mem_size = active_lib.mem_size();
 	usz new_mem_size = new_lib.mem_size();
+	usz old_mem_version = active_lib.mem_version();
+	usz new_mem_version = new_lib.mem_version();
+
 
 	io::printfn("old memory size: %s, new memory size: %s", old_mem_size, new_mem_size);
+	io::printfn("old memory version: %s, new memory version: %s", old_mem_version, new_mem_version);
 
-	bool should_reset_state = force_state_reset || old_mem_size != new_mem_size
+	bool should_reset_state = force_state_reset || old_mem_size != new_mem_size || old_mem_version != new_mem_version
 		|| retired_lib_count >= MAX_RETIRED_LIBS;
 
 	if (should_reset_state)
@@ -193,6 +199,7 @@ fn bool load_game_lib(GameLib* lib) => @pool()
 	TickFn game_tick;
 	MemFn game_mem;
 	MemSizeFn game_mem_size;
+	MemVersionFn game_mem_version;
 	ShutdownFn game_shutdown;
 	InitWindowFn game_init_window;
 	ShouldRunFn game_should_run;
@@ -218,6 +225,9 @@ fn bool load_game_lib(GameLib* lib) => @pool()
 		game_mem_size
 	) || !@load_lib_fn(
 		handle,
+		game_mem_version
+	) || !@load_lib_fn(
+		handle,
 		game_shutdown
 	) || !@load_lib_fn(handle, game_init_window) || !@load_lib_fn(handle, game_should_run))
 	{
@@ -230,6 +240,7 @@ fn bool load_game_lib(GameLib* lib) => @pool()
 	lib.tick = game_tick;
 	lib.mem = game_mem;
 	lib.mem_size = game_mem_size;
+	lib.mem_version = game_mem_version;
 	lib.shutdown = game_shutdown;
 	lib.init_window = game_init_window;
 	lib.should_run = game_should_run;
