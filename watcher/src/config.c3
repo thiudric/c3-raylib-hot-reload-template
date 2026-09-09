@@ -17,7 +17,7 @@ const String[] BUILD_GAME_CMD @feat(LINUX) = { "c3c", "build", "game-linux" };
 const String[] BUILD_GAME_CMD @feat(WIN32) = { "c3c", "build", "game-windows" };
 
 const String[] DEP_PATHS @feat(WIN32) = {
-	"./build/libraylib.dll",
+	"./build/raylib.dll",
 	"./build/raygui.dll",
 	"./build/raylib/raylib/raylib.lib",
 	"./build/raygui/raygui.lib"

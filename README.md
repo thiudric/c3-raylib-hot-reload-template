@@ -8,27 +8,26 @@ Tested on Linux and Windows.
 
 For the simplest development workflow, there is an optional C3 watcher program included that launches the game and automatically rebuilds the game whenever a file under `src/game` changes. It also detects if dependencies need to be built and offers to do so. The watcher runs the platform-specific PowerShell scripts on Windows and shell scripts on Linux.
 
-```
-cd watcher
-c3c build watcher
-cd ..
-```
 
-Linux: `./watcher/build/watcher`
 
-Windows: `.\watcher\build\watcher.exe`
-
-## Dev Workflow
+## Setup
 
 ### Dependencies
 
-All platforms: c3c 0.8.3+, cmake 3.24+, git, gcc
+All platforms: c3c 0.8.3+, CMake 3.25+, Git. Add `c3c`, `cmake`, and `git` to your `PATH`.
 
-Windows: mingw32-make
+Linux: GCC/G++, Make, binutils, and development headers/libraries for libc, OpenGL, and X11.
 
-On linux, these should be available in your package manager.
+On Debian/Ubuntu:
 
-On Windows, I installed git-for-windows, cmake, and c3c from their respective websites, and added c3c's directory to my path environment variable. The build scripts use Windows PowerShell 5.1, which is included with Windows.
+```sh
+sudo apt update
+sudo apt install build-essential binutils cmake git \
+    libgl1-mesa-dev libx11-dev libxrandr-dev libxinerama-dev \
+    libxcursor-dev libxi-dev libxext-dev
+```
+
+Windows (x64): install **Visual Studio 2022 Build Tools** with the **Desktop development with C++** workload, including the MSVC v143 x64/x86 build tools and a Windows 10 or 11 SDK. 
 
 ### Cloning the repo
 
@@ -41,33 +40,48 @@ run `git submodule update --init --recursive` if you forgot --recurse-submodules
 
 ## Dev Workflow 
 
-### Build Raylib/Raygui as shared library:
+### Recommended - Watcher Executable
+
+```
+cd watcher
+c3c build watcher
+cd ..
+```
+
+Linux: `./watcher/build/watcher`
+
+Windows: `.\watcher\build\watcher.exe`
+
+### Alternatively follow the manual steps below 
+
+#### Build Raylib/Raygui as shared library:
 
 Linux: `./build_deps.sh`
 
 Windows: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build_deps.ps1`
 
-(you may be able to just run `./build_deps.ps1` without the extra parameters)
+You can also run `.\build_deps.ps1` directly if your PowerShell execution policy permits it.
 
-### Build the host: 
+#### Build the host: 
 all platforms: `c3c build host`
 
-### Build and publish the game library:
+#### Build and publish the game library:
 
-Linux: `./build_game.sh`
+Linux: `c3c build game-linux`
 
-Windows: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build_game.ps1`
+Windows: `c3c build game-windows`
 
-### run the host:
+#### run the host:
 
 Linux: `./build/host`
+
 Windows: `.\build\host.exe`
 
-### Hot reloading
+#### Hot reloading
 
 To update the active game library:
 - edit tick/init_window/shutdown functions in `src/game/game.c3` 
-- run `./build_game.sh(ps1)` again, depending on platform. 
+- run `c3c build game-linux` or `c3c build game-windows` again, depending on platform. 
 - If something goes wrong, press F5 to force full reset of game state.
 
 ## Build for release:
@@ -76,7 +90,7 @@ Linux: `./build_release.sh`
 
 Windows: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build_release.ps1`
 
-outputs `build/release` with dependencies bundled into a single executable
+Produces `build/release` on Linux or `build/release.exe` on Windows, with Raylib and Raygui statically linked. The Windows release script builds its static dependencies automatically using the same CMake/MSVC setup as development; no prior shared-library build is required. The Windows executable still uses the dynamic C runtime, including `VCRUNTIME140.dll`; deployment machines need the Microsoft Visual C++ 2015–2022 Redistributable (x64). Static Raylib/Raygui linkage does not mean a fully static executable.
 
 ## TODO
 
